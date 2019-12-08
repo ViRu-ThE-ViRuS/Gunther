@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
+	"github.com/ViRu-ThE-ViRuS/Gunther/src/lexer"
 	"github.com/joho/godotenv"
 )
 
@@ -24,4 +26,7 @@ func init() {
 
 func main() {
 	log.Printf("arguments: %v", args)
+
+	temp := lexer.Tokenize("(+ 1 2 (+ 1 2) )")
+	fmt.Println(temp, len(temp))
 }
