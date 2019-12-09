@@ -1,20 +1,38 @@
 package lexer
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
 
 // Tokenize the given segment
-func Tokenize(current string) []interface{} {
+func Tokenize(current string) (identified []interface{}, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = r.(error)
+			identified = nil
+		}
+	}()
+
+	var tokens []string
+
 	fields := strings.Fields(current)
-	tokens := splitBrackets(fields)
-	identified := mapper(tokens)
-	return identified
+
+	tokens, err = splitBrackets(fields)
+	if err != nil {
+		panic(err)
+	}
+
+	identified, err = mapper(tokens)
+	if err != nil {
+		panic(err)
+	}
+
+	return
 }
 
-func splitBrackets(fields []string) []string {
-	temp := []string{}
+func splitBrackets(fields []string) (temp []string, err error) {
 	for _, item := range fields {
 		item = strings.TrimSpace(item)
 
@@ -27,11 +45,16 @@ func splitBrackets(fields []string) []string {
 		}
 	}
 
-	return temp
+	return
 }
 
-func mapper(tokens []string) []interface{} {
-	var table []interface{}
+func mapper(tokens []string) (table []interface{}, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = r.(error)
+			table = nil
+		}
+	}()
 
 	for _, item := range tokens {
 		if item == "" {
@@ -56,11 +79,11 @@ func mapper(tokens []string) []interface{} {
 			val, _ := strconv.ParseFloat(item, 64)
 			table = append(table, val)
 		default:
-			panic("invalid input " + item)
+			panic(errors.New("invalid input " + item))
 		}
 	}
 
-	return table
+	return
 }
 
 func chkInt(item string) bool {
@@ -73,7 +96,6 @@ func chkInt(item string) bool {
 func chkFloat(item string) bool {
 	if _, err := strconv.ParseFloat(item, 64); err == nil {
 		return true
-	} else {
-		return false
 	}
+	return false
 }
