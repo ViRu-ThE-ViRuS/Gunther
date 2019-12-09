@@ -66,8 +66,8 @@ func mapper(tokens []string) (table []interface{}, err error) {
 			continue
 		}
 
-		if val, ok := Optable[item]; ok {
-			table = append(table, val)
+		if _, ok := Optable[item]; ok {
+			table = append(table, item)
 			continue
 		}
 

@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/ViRu-ThE-ViRuS/Gunther/src/lexer"
+	"github.com/ViRu-ThE-ViRuS/Gunther/src/parser"
 	"github.com/joho/godotenv"
 )
 
@@ -14,7 +16,7 @@ var (
 
 func init() {
 	if err := godotenv.Load(); err != nil {
-		log.Println("no .enf file found")
+		log.Println("no .env file found")
 	}
 
 	if len(os.Getenv("DEBUG")) == 0 {
@@ -24,4 +26,12 @@ func init() {
 
 func main() {
 	log.Printf("arguments: %v", args)
+
+	temp, err := lexer.Tokenize("(+ 1 2)")
+	if err != nil {
+		log.Fatalln("lexer crashed")
+		os.Exit(0)
+	}
+
+	temp, err = parser.Parse(temp)
 }
